@@ -32,6 +32,7 @@ PACKAGES_TO_INSTALL=(
     bridge-utils
     xhost
     cockpit
+    sunshine
 )
 
 
