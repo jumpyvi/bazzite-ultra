@@ -15,6 +15,15 @@ enabled=1
 enabled_metadata=1
 EOF
 
+tee /etc/yum.repos.d/docker-ce.repo <<'EOF'
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/fedora/gpg
+EOF
+
 tee /etc/yum.repos.d/nordvpn.repo <<'EOF'
 [nordvpn]
 name=nordvpn
@@ -33,6 +42,11 @@ PACKAGES_TO_INSTALL=(
     xhost
     cockpit
     sunshine
+    containerd.io
+    docker-buildx-plugin
+    docker-ce
+    docker-ce-cli
+    docker-compose-plugin
 )
 
 
