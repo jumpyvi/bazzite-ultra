@@ -2,6 +2,39 @@
 
 set -ouex pipefail
 
+tee /etc/yum.repos.d/ghostty.repo <<'EOF'
+[copr:copr.fedorainfracloud.org:pgdev:ghostty]
+name=Copr repo for Ghostty owned by pgdev
+baseurl=https://download.copr.fedorainfracloud.org/results/pgdev/ghostty/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/pgdev/ghostty/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+EOF
+
+tee /etc/yum.repos.d/nordvpn.repo <<'EOF'
+[nordvpn]
+name=nordvpn
+enabled=1
+gpgcheck=0
+baseurl=https://repo.nordvpn.com/yum/nordvpn/centos/x86_64
+EOF
+
+
+RELEASE="$(rpm -E %fedora)"
+
+PACKAGES_TO_INSTALL=(
+    ghostty
+    nordvpn
+    bridge-utils
+    xhost
+    cockpit
+)
+
+
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
@@ -10,15 +43,7 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs a package from fedora repos
-dnf5 install -y tmux 
+rpm-ostree install "${PACKAGES_TO_INSTALL[@]}"
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
-
-#### Example for enabling a System Unit File
-
-systemctl enable podman.socket
+rpm-ostree override remove \
+    nvtop tailscale
